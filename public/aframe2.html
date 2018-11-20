@@ -1,0 +1,83 @@
+<html>
+  <head>
+    <script src="https://aframe.io/releases/0.8.0/aframe.min.js"></script>
+    <!-- <script src="https://unpkg.com/aframe-event-set-component@3.0.3/dist/aframe-event-set-component.min.js"></script> -->
+    <script>
+      AFRAME.registerComponent('change-color-on-hover', {
+        schema: {
+          color: {default: 'red'}
+        },
+
+        init: function () {
+          var data = this.data;
+          var el = this.el;  // <a-box>
+          var defaultColor = el.getAttribute('material').color;
+
+          el.addEventListener('mouseenter', function () {
+            el.setAttribute('color', data.color);
+          });
+
+          el.addEventListener('mouseleave', function () {
+            el.setAttribute('color', defaultColor);
+          });
+        }
+      });
+    </script>
+
+  </head>
+  <body>
+    <a-scene >
+      <!-- <a-entity class="camRot" rotation ="0 190 0"> -->
+        <a-entity position="0 1.6 0" camera look-controls>
+          <!-- <a-entity geometry="primitive: plane; height: 0.2; width: 0.2" position="0 0 -1" -->
+               <!-- material="color: gray; opacity: 0.5"> -->
+               <a-cursor>
+
+               </a-cursor>
+             <!-- </a-entity> -->
+        <!-- </a-entity> -->
+      </a-entity>
+
+      <a-box position="-3 0.5 3" rotation="0 45 0"
+       change-color-on-hover="color: blue" </a-box>
+
+      <!-- <a-box position="-3 0.5 3" rotation="0 45 0" color="rgb(50,180,50)"
+        event-set__enter="_event: mouseenter; color: rgb(255,0,0)"
+        event-set__leave="_event: mouseleave; color: rgb(180,100,100)"></a-box> -->
+
+
+      <!-- <a-text id="redText" value="Great - Find the Blue cube" align="center"
+      color="rgb(255,30,30)" rotation="0 135 0" visible="true" position="-3 1.35 -3.7"
+                   geometry="primitive: plane; width: 2.75" material="color: #333"></a-text> -->
+
+
+      <a-box position="-3 0.5 -3" rotation="0 45 0" color="rgb(50,180,50)"
+            event-set__enter="_event: mouseenter; color: rgb(100,255,100)"
+            event-set__leave="_event: mouseleave; color: rgb(50,180,50)"></a-box>
+
+      <a-box position= "3 0.5 -3" rotation="0 45 0" color="rgb(227,194,7)"
+            event-set__enter="_event: mouseenter; color: rgb(255,223,36)"
+            event-set__leave="_event: mouseleave; color: rgb(227,194,7)"></a-box>
+
+      <a-box position= "3 0.5 3" rotation="0 45 0" color="rgb(50,50,190)"
+            event-set__enter="_event: mouseenter; color: rgb(50,50,255)"
+            event-set__leave="_event: mouseleave; color: rgb(50,50,190)"></a-box>
+
+
+
+      <a-box position="0 0.5 3" rotation="0 45 0" color="rgb(50,50,50)"></a-box>
+      <a-box position="0 0.5 -3" rotation="0 45 0" color="rgb(50,50,50)"></a-box>
+      <a-box position= "3 0.5 0" rotation="0 45 0" color="rgb(50,50,50)"></a-box>
+      <a-box position= "-3 0.5 0" rotation="0 45 0" color="rgb(50,50,50)"></a-box>
+
+
+      <!-- <a-sphere position="0 1.25 -5" radius="1.25" color="#EF2D5E"></a-sphere>
+      <a-cylinder position="1 1.4 -4" radius="0.5" height="2.5" color="#FFC65D"></a-cylinder>
+      <a-plane position="0 0 -4" rotation="-90 0 0" width="4" height="4" color="#7BC8A4"></a-plane> -->
+      <a-sky color="#ECECEC"></a-sky>
+    </a-scene>
+  </body>
+  <script>
+  $("#instruction").text("Close the Gap").css("color", "gray")
+  </script>
+</html>

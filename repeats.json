@@ -1,0 +1,409 @@
+,
+
+
+{
+  "repeats": 3,
+  "duration": 5,
+  "sequences":[
+  {
+    "type": "WalkTowardsHeading",
+    "duration": 5,
+    "parameters": {
+      "heading": 0
+    }
+  },
+  {
+    "type": "WalkTowardsHeading",
+    "duration": 5,
+    "parameters": {
+      "heading": 180
+    }
+  }
+ ]
+},
+
+{
+  "type": "WalkTowardsHeading",
+  "duration": 5,
+  "parameters": {
+    "heading": 0
+  }
+},
+
+
+
+{
+  "repeats": 2,
+  "duration": 5,
+  "sequences": [
+    {
+      "duration": 5,
+      "groups": [
+        {
+          "type": "WalkTowardsHeading",
+          "duration": 5,
+          "parameters": {
+            "heading": 180
+          }
+        },
+        {
+          "type": "WalkTowardsHeading",
+          "duration": 5,
+          "parameters": {
+            "heading": 270
+          }
+        },
+        {
+          "type": "WalkTowardsHeading",
+          "duration": 5,
+          "parameters": {
+            "heading": 315
+          }
+        }
+      ]
+    },
+    {
+      "duration": 5,
+      "groups": [
+        {
+          "type": "WalkTowardsHeading",
+          "duration": 5,
+          "parameters": {
+            "heading": 0
+          }
+        },
+        {
+          "type": "WalkTowardsHeading",
+          "duration": 5,
+          "parameters": {
+            "heading": 90
+          }
+        },
+        {
+          "type": "WalkTowardsHeading",
+          "duration": 5,
+          "parameters": {
+            "heading": 135
+          }
+        }
+      ]
+    }
+  ]
+},
+
+{
+  "duration": 5,
+  "groups": [
+    {
+      "type": "WalkTowardsHeading",
+      "duration": 5,
+      "parameters": {
+        "heading": 180
+      }
+    },
+    {
+      "type": "WalkTowardsHeading",
+      "duration": 5,
+      "parameters": {
+        "heading": 270
+      }
+    },
+    {
+      "type": "WalkTowardsHeading",
+      "duration": 5,
+      "parameters": {
+        "heading": 315
+      }
+    }
+  ]
+},
+
+
+
+
+{
+  "duration": 5,
+  "groups": [
+    {
+      "type": "WalkTowardsHeading",
+      "duration": 5,
+      "parameters": {
+        "heading": 45
+      }
+    },
+    {
+      "type": "WalkTowardsHeading",
+      "duration": 5,
+      "parameters": {
+        "heading": 90
+      }
+    }
+  ]
+},
+
+{
+  "duration": 5,
+  "groups": [
+    {
+      "type": "WalkTowardsHeading",
+      "duration": 5,
+      "parameters": {
+        "heading": 225
+      }
+    },
+    {
+      "type": "WalkTowardsHeading",
+      "duration": 5,
+      "parameters": {
+        "heading": 270
+      }
+    }
+  ]
+},
+
+{
+  "duration": 6,
+  "groups": [
+    {
+      "type": "WalkTowardsHeading",
+      "duration": 6,
+      "parameters": {
+        "heading": 45
+      }
+    },
+    {
+      "type": "WalkTowardsHeading",
+      "duration": 6,
+      "parameters": {
+        "heading": 90
+      }
+    },
+    {
+      "type": "PanXZOscillate",
+      "parameters": {
+        "duration": 6,
+        "segmentDuration": 3,
+        "aX": -60,
+        "aZ": 90,
+        "bX": -60,
+        "bZ": 155
+      }
+    }
+  ]
+},
+
+{
+  "duration": 6,
+  "groups": [
+    {
+      "type": "WalkTowardsHeading",
+      "duration": 6,
+      "parameters": {
+        "heading": 225
+      }
+    },
+    {
+      "type": "WalkTowardsHeading",
+      "duration": 6,
+      "parameters": {
+        "heading": 270
+      }
+    },
+    {
+      "type": "PanXZOscillate",
+      "parameters": {
+        "duration": 6,
+        "segmentDuration": 3,
+        "aX": -60,
+        "aZ": 90,
+        "bX": -60,
+        "bZ": 155
+      }
+    }
+  ]
+},
+
+
+{
+  "duration": 6,
+  "groups": [
+    {
+      "type": "PanXZOscillate",
+      "parameters": {
+        "duration": 6,
+        "segmentDuration": 3,
+        "aX": -60,
+        "aZ": 90,
+        "bX": -60,
+        "bZ": 155
+      }
+    },
+    {
+      "type": "WalkTowardsHeading",
+      "duration": 6,
+      "parameters": {
+        "heading": 90
+      }
+    },
+    {
+      "type": "WalkTowardsHeading",
+      "duration": 6,
+      "parameters": {
+        "heading": 90
+      }
+    }
+  ]
+},
+
+
+{
+  "duration": 6,
+  "groups": [
+    {
+      "type": "PanXZOscillate",
+      "parameters": {
+        "duration": 6,
+        "segmentDuration": 3,
+        "aX": -60,
+        "aZ": 90,
+        "bX": -60,
+        "bZ": 155
+      }
+    },
+    {
+      "type": "WalkTowardsHeading",
+      "duration": 6,
+      "parameters": {
+        "heading": 270
+      }
+    },
+    {
+      "type": "WalkTowardsHeading",
+      "duration": 6,
+      "parameters": {
+        "heading": 270
+      }
+    }
+  ]
+},
+
+{
+  "duration": 6,
+  "groups": [
+    {
+      "type": "WalkTowardsHeading",
+      "duration": 6,
+      "parameters": {
+        "heading": 45
+      }
+    },
+    {
+      "type": "PanXZOscillate",
+      "parameters": {
+        "duration": 6,
+        "segmentDuration": 3,
+        "aX": -60,
+        "aZ": 90,
+        "bX": -60,
+        "bZ": 155
+      }
+    },
+    {
+      "type": "WalkTowardsHeading",
+      "duration": 6,
+      "parameters": {
+        "heading": 45
+      }
+    }
+  ]
+},
+
+{
+  "duration": 6,
+  "groups": [
+    {
+      "type": "WalkTowardsHeading",
+      "duration": 6,
+      "parameters": {
+        "heading": 270
+      }
+    },
+    {
+      "type": "PanXZOscillate",
+      "parameters": {
+        "duration": 6,
+        "segmentDuration": 3,
+        "aX": -60,
+        "aZ": 90,
+        "bX": -60,
+        "bZ": 155
+      }
+    },
+    {
+      "type": "WalkTowardsHeading",
+      "duration": 6,
+      "parameters": {
+        "heading": 270
+      }
+    }
+  ]
+},
+
+{
+  "duration": 6,
+  "groups": [
+    {
+      "type": "WalkTowardsHeading",
+      "duration": 6,
+      "parameters": {
+        "heading": 45
+      }
+    },
+    {
+      "type": "WalkTowardsHeading",
+      "duration": 6,
+      "parameters": {
+        "heading": 90
+      }
+    }
+  ]
+},
+{
+  "duration": 6,
+  "groups": [
+    {
+      "type": "WalkTowardsHeading",
+      "duration": 6,
+      "parameters": {
+        "heading": 225
+      }
+    },
+    {
+      "type": "WalkTowardsHeading",
+      "duration": 6,
+      "parameters": {
+        "heading": 270
+      }
+    }
+  ]
+},
+
+{
+  "duration": 6,
+  "groups": [
+    {
+      "type": "WalkTowardsHeading",
+      "duration": 6,
+      "parameters": {
+        "heading": 225
+      }
+    },
+    {
+      "type": "WalkTowardsHeading",
+      "duration": 6,
+      "parameters": {
+        "heading": 270
+      }
+    }
+  ]
+},
