@@ -3,6 +3,8 @@
     <script src="https://aframe.io/releases/0.8.0/aframe.min.js"></script>
     <!-- <script src="https://unpkg.com/aframe-event-set-component@3.0.3/dist/aframe-event-set-component.min.js"></script> -->
     <script>
+
+
       AFRAME.registerComponent('change-color-on-hover', {
         schema: {
           color: {default: 'red'}
@@ -13,8 +15,18 @@
           var el = this.el;  // <a-box>
           var defaultColor = el.getAttribute('material').color;
 
+
+
+
           el.addEventListener('mouseenter', function () {
+            var randomHeight = 0.5 //(0.5-Math.random())*6
+            var randomRotationTarget = Math.random() * 360
             el.setAttribute('color', data.color);
+            el.setAttribute('position', {
+              x: 3* Math.cos(randomRotationTarget * 180/Math.PI), //0.5-Math.random() *6,
+              y: randomHeight,
+              z: 3* Math.sin(randomRotationTarget * 180/Math.PI) //0.5-Math.random() *6
+            })
           });
 
           el.addEventListener('mouseleave', function () {
@@ -22,54 +34,163 @@
           });
         }
       });
+
+      AFRAME.registerComponent('box', {
+        schema: {
+          width: {type: 'number', default: 1},
+          height: {type: 'number', default: 1},
+          depth: {type: 'number', default: 1},
+          color: {type: 'color', default: '#AAA'}
+        },
+
+        init: function () {
+          var data = this.data;
+          var el = this.el;
+          // Create geometry.
+          this.geometry = new THREE.BoxBufferGeometry(data.width, data.height, data.depth);
+          // Create material.
+          this.material = new THREE.MeshStandardMaterial({color: data.color});
+          // Create mesh.
+          this.mesh = new THREE.Mesh(this.geometry, this.material);
+          // Set mesh on entity.
+          el.setObject3D('mesh', this.mesh);
+        },
+
+        update: function (oldData) {
+          var data = this.data;
+          var el = this.el;
+
+          // If `oldData` is empty, then this means we're in the initialization process.
+          // No need to update.
+          if (Object.keys(oldData).length === 0) { return; }
+
+          // Geometry-related properties changed. Update the geometry.
+          if (data.width !== oldData.width ||
+              data.height !== oldData.height ||
+              data.depth !== oldData.depth) {
+            el.getObject3D('mesh').geometry = new THREE.BoxBufferGeometry(data.width, data.height,
+                                                                          data.depth);
+          }
+
+          // Material-related properties changed. Update the material.
+          if (data.color !== oldData.color) {
+            el.getObject3D('mesh').material.color = data.color;
+          }
+        },
+
+        remove: function () {
+          this.el.removeObject3D('mesh');
+        }
+
+      });
+
+      AFRAME.registerComponent('point', {
+          schema: {
+            target: {type: 'selector'}
+          },
+
+          init: function () {
+            this.directionVec3 = new THREE.Vector3();
+          },
+
+          tick: function(time, timeDelta){
+
+            var camera = document.querySelector('[camera]').object3D;
+            var cameraLook = camera.getWorldDirection();
+
+            var targetPosition = this.data.target.object3D.position;
+            var currentPosition = this.el.object3D.position;
+
+            // console.log(this.el)
+            // console.log(currentPosition);
+            var angle = cameraLook.angleTo(targetPosition);
+
+            this.el.setAttribute('rotation', {
+              x: 0,
+              y: 0,
+              z: THREE.Math.radToDeg(angle)
+            });
+
+          }
+      });
+
+      AFRAME.registerComponent('follow', {
+
+        schema: {
+          target: {type: 'selector'},
+          speed: {type: 'number'}
+        },
+
+        init: function () {
+          this.directionVec3 = new THREE.Vector3();
+        },
+
+        tick: function (time, timeDelta) {
+           var directionVec3 = this.directionVec3;
+
+           // Grab position vectors (THREE.Vector3) from the entities' three.js objects.
+           var targetPosition = this.data.target.object3D.position;
+           var currentPosition = this.el.object3D.position;
+
+           // Subtract the vectors to get the direction the entity should head in.
+           directionVec3.copy(targetPosition).sub(currentPosition);
+
+           // Calculate the distance.
+           var distance = directionVec3.length();
+
+           // Don't go any closer if a close proximity has been reached.
+           if (distance < 1) { return; }
+
+           // Scale the direction vector's magnitude down to match the speed.
+           var factor = this.data.speed / distance;
+           ['x', 'y', 'z'].forEach(function (axis) {
+             directionVec3[axis] *= factor * (timeDelta / 1000);
+           });
+
+           // Translate the entity in the direction towards the target.
+           this.el.setAttribute('position', {
+             x: currentPosition.x + directionVec3.x,
+             y: currentPosition.y + directionVec3.y,
+             z: currentPosition.z + directionVec3.z
+           });
+         }
+
+      });
+
+
     </script>
 
   </head>
   <body>
     <a-scene >
       <!-- <a-entity class="camRot" rotation ="0 190 0"> -->
-        <a-entity position="0 1.6 0" camera look-controls>
-          <!-- <a-entity geometry="primitive: plane; height: 0.2; width: 0.2" position="0 0 -1" -->
-               <!-- material="color: gray; opacity: 0.5"> -->
-               <a-cursor>
+        <a-entity id="camera" position="0 1.6 0" camera look-controls>
+          <a-entity geometry="primitive: plane; height: 0.2; width: 0.01" position="0 0 -1" rotation="0 0 45" material="color: gray; opacity: 0.5" point="target: #jumpbox">
 
-               </a-cursor>
              <!-- </a-entity> -->
-        <!-- </a-entity> -->
+        </a-entity>
+        <!-- <a-cursor id="cursor">
+        </a-cursor> -->
+        <a-entity cursor="fuse: true; fuseTimeout: 500"
+            position="0 0 -1"
+            geometry="primitive: ring; radiusInner: 0.02; radiusOuter: 0.03"
+            material="color: black; shader: flat">
+        </a-entity>
+
       </a-entity>
 
-      <a-box position="-3 0.5 3" rotation="0 45 0"
-       change-color-on-hover="color: blue" </a-box>
+      <a-box id="jumpbox" position="-3 0.5 -3" rotation="0 45 0" color="rgb(50,180,50)" change-color-on-hover="color: blue"></a-box>
+      <!-- <a-box position= "3 0.5 -3" rotation="0 45 0" color="rgb(227,194,7)" change-color-on-hover="color: blue"></a-box>
+      <a-box position= "3 0.5 3" rotation="0 45 0" color="rgb(50,50,190)" change-color-on-hover="color: blue"></a-box>
+      <a-box position="-3 0.5 3" rotation="0 45 0" change-color-on-hover="color: blue"> </a-box> -->
 
-      <!-- <a-box position="-3 0.5 3" rotation="0 45 0" color="rgb(50,180,50)"
-        event-set__enter="_event: mouseenter; color: rgb(255,0,0)"
-        event-set__leave="_event: mouseleave; color: rgb(180,100,100)"></a-box> -->
+      <!-- <a-box position="-3 1.5 -3" rotation="0 45 0" color="rgb(50,50,50)"></a-box>
+      <a-box position="3 1.5 -3" rotation="0 45 0" color="rgb(50,50,50)"></a-box>
+      <a-box position= "3 1.5 3" rotation="0 45 0" color="rgb(50,50,50)"></a-box>
+      <a-box position= "-3 1.5 3" rotation="0 45 0" color="rgb(50,50,50)" follow="target: #orangebox; speed: 0.14"></a-box>
 
-
-      <!-- <a-text id="redText" value="Great - Find the Blue cube" align="center"
-      color="rgb(255,30,30)" rotation="0 135 0" visible="true" position="-3 1.35 -3.7"
-                   geometry="primitive: plane; width: 2.75" material="color: #333"></a-text> -->
-
-
-      <a-box position="-3 0.5 -3" rotation="0 45 0" color="rgb(50,180,50)"
-            event-set__enter="_event: mouseenter; color: rgb(100,255,100)"
-            event-set__leave="_event: mouseleave; color: rgb(50,180,50)"></a-box>
-
-      <a-box position= "3 0.5 -3" rotation="0 45 0" color="rgb(227,194,7)"
-            event-set__enter="_event: mouseenter; color: rgb(255,223,36)"
-            event-set__leave="_event: mouseleave; color: rgb(227,194,7)"></a-box>
-
-      <a-box position= "3 0.5 3" rotation="0 45 0" color="rgb(50,50,190)"
-            event-set__enter="_event: mouseenter; color: rgb(50,50,255)"
-            event-set__leave="_event: mouseleave; color: rgb(50,50,190)"></a-box>
-
-
-
-      <a-box position="0 0.5 3" rotation="0 45 0" color="rgb(50,50,50)"></a-box>
-      <a-box position="0 0.5 -3" rotation="0 45 0" color="rgb(50,50,50)"></a-box>
-      <a-box position= "3 0.5 0" rotation="0 45 0" color="rgb(50,50,50)"></a-box>
-      <a-box position= "-3 0.5 0" rotation="0 45 0" color="rgb(50,50,50)"></a-box>
-
+      <a-entity id="orangebox" box="width: 1.5; height: 0.25; depth: 1; color: orange"
+            position="-2 2.5 -2"> </a-entity> -->
 
       <!-- <a-sphere position="0 1.25 -5" radius="1.25" color="#EF2D5E"></a-sphere>
       <a-cylinder position="1 1.4 -4" radius="0.5" height="2.5" color="#FFC65D"></a-cylinder>
@@ -77,7 +198,7 @@
       <a-sky color="#ECECEC"></a-sky>
     </a-scene>
   </body>
-  <script>
-  $("#instruction").text("Close the Gap").css("color", "gray")
-  </script>
+  <!-- <script>
+  // $("#instruction").text("Close the Gap").css("color", "gray") -->
+  <!-- </script> -->
 </html>
