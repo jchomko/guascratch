@@ -1,40 +1,50 @@
 <html>
   <head>
+    <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
     <script src="https://aframe.io/releases/0.8.0/aframe.min.js"></script>
     <!-- <script src="https://unpkg.com/aframe-event-set-component@3.0.3/dist/aframe-event-set-component.min.js"></script> -->
     <script>
 
-
-      AFRAME.registerComponent('change-color-on-hover', {
-        schema: {
-          color: {default: 'red'}
-        },
-
-        init: function () {
-          var data = this.data;
-          var el = this.el;  // <a-box>
-          var defaultColor = el.getAttribute('material').color;
-
-
-
-
-          el.addEventListener('mouseenter', function () {
-            var randomHeight = 0.5 //(0.5-Math.random())*6
-            var randomRotationTarget = Math.random() * 360
-            el.setAttribute('color', data.color);
-            el.setAttribute('position', {
-              x: 3* Math.cos(randomRotationTarget * 180/Math.PI), //0.5-Math.random() *6,
-              y: randomHeight,
-              z: 3* Math.sin(randomRotationTarget * 180/Math.PI) //0.5-Math.random() *6
-            })
-          });
-
-          el.addEventListener('mouseleave', function () {
-            el.setAttribute('color', defaultColor);
-          });
+    $(document).bind('keypress', function(e) {
+        console.log(e.which)
+        if(e.which == '101'){
+          addThings()
         }
-      });
+    })
 
+    // $(document).ready(function(){
+    //   addThings()
+    // })
+
+    function addThings(){
+
+      var sceneEl = document.querySelector('a-scene');
+
+      for(var i = 0; i < 7; i ++ ){
+
+        var entityEl = document.createElement('a-entity');
+
+        entityEl.setAttribute('geometry', { primitive: 'box', height: 3, width: 1 });
+        entityEl.setAttribute('material', {color: 'gray', opacity: 0.5});
+        // entityEl.setAttribute('change-color-on-hover', 'green')
+
+        // entitlEl.setAttribute('position', {})
+        var randomHeight = i //(0.5-Math.random())*6
+        var randomRotationTarget = i*10//Math.random() * 360
+        entityEl.setAttribute('position', {
+            x: 5*Math.cos(randomRotationTarget * 180/Math.PI), //0.5-Math.random() *6,
+            y: randomHeight,
+            z: 5*Math.sin(randomRotationTarget * 180/Math.PI) //0.5-Math.random() *6
+          })
+
+        entityEl.setAttribute('remove-object-on-hover', 'white');
+
+        sceneEl.appendChild(entityEl);
+
+      }
+
+
+    }
       AFRAME.registerComponent('box', {
         schema: {
           width: {type: 'number', default: 1},
@@ -155,6 +165,76 @@
            });
          }
 
+      });
+
+      AFRAME.registerComponent('remove-object-on-hover',{
+        schema:{
+          color: {default: 'red'}
+        },
+
+        init: function(){
+          var data = this.data;
+          var el = this.el;  // <a-box>
+
+          el.addEventListener('mouseenter', function () {
+            el.parentNode.removeChild(el)
+          });
+
+        },
+
+
+
+      });
+
+      AFRAME.registerComponent('change-color-on-hover', {
+        schema: {
+          color: {default: 'red'}
+        },
+
+        init: function () {
+          var data = this.data;
+          var el = this.el;  // <a-box>
+          var defaultColor = el.getAttribute('material').color;
+
+          var sceneEl = document.querySelector('a-scene');
+          var entityEl = document.createElement('a-entity');
+
+          el.addEventListener('mouseenter', function () {
+
+            // entityEl.setAttribute('box',{ width=1, height=2, depth=3, color="rgb(50,180,50)"});
+            // var randomHeight = 0.5 //(0.5-Math.random())*6
+            // var randomRotationTarget = Math.random() * 360
+          el.setAttribute('color', data.color);
+            // el.setAttribute('position', {
+            //   x: 3* Math.cos(randomRotationTarget * 180/Math.PI), //0.5-Math.random() *6,
+            //   y: randomHeight,
+            //   z: 3* Math.sin(randomRotationTarget * 180/Math.PI) //0.5-Math.random() *6
+            // })
+          });
+
+          el.addEventListener('mouseleave', function () {
+
+            el.setAttribute('color', defaultColor);
+
+            addThings()
+
+            // entityEl.setAttribute('geometry', { primitive: 'box', height: 3, width: 1 });
+            // var origin = el.getAttribute('position')
+            // var newOrigin = origin
+            //
+            // entityEl.setAttribute('position', newOrigin)
+            // var ne = entityEl.getAttribute('position')
+            // ne.y += 1
+
+            // entityEl.setAttribute('position', ne)
+            // entityEl.setAttribute('material', {color: 'gray', opacity: 0.5})
+            // entityEl.setAttribute('change-color-on-hover', 'green')
+            //
+            // sceneEl.appendChild(entityEl);
+
+          });
+
+        }
       });
 
 
