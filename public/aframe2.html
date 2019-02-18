@@ -9,7 +9,13 @@
         console.log(e.which)
         if(e.which == '101'){
           // addThings()
-          addThingsBetweenTwoPoints()
+          addThingsBetweenTwoPoints(110)
+        }else if(e.which == '114'){
+          // addThings()
+          addThingsBetweenTwoPoints(10)
+        }else if(e.which == '116'){
+          // addThings()
+          addThingsBetweenTwoPoints(270)
         }
     })
 
@@ -46,11 +52,11 @@
     }
 
 
-    function addThingsBetweenTwoPoints(){
+    function addThingsBetweenTwoPoints(target){
 
       var sceneEl = document.querySelector('a-scene');
       var camera = document.querySelector('[camera]')
-      var target = 180
+      // var target = 110
 
       // var camRot = camera.getAttribute('rotation')
       // var cameraEl = document.querySelector('#camera');
@@ -58,35 +64,58 @@
 
       // var worldPos = new THREE.Vector3();
       // worldPos.setFromMatrixPosition(cameraEl.object3D.matrixWorld);
-      var camRotNormalized = rotation.y%360
 
-      console.log("cam rot: " + camRotNormalized);
+      var camRotNormalized = rotation.y
 
-      // var diff = camRot.y - target
+      console.log("target: " + target)
+      console.log("cam rot: " + camRotNormalized)
 
-      // console.log(camRot)
 
-      // if(diff < 0){
-      //   diff += 360
-      // }
+      var goalEl = document.createElement('a-entity');
+
+      goalEl.setAttribute('geometry', { primitive: 'box', height: 1.8, width: 1 });
+      goalEl.setAttribute('material', {color: 'green', opacity: 0.5});
+      var nT = (target + 180)%360
+      goalEl.setAttribute('position', {
+          x: 5 * Math.sin((nT * Math.PI)/180), //0.5-Math.random() *6,
+          y: 1,
+          z: 5 * Math.cos((nT * Math.PI)/180) //0.5-Math.random() *6
+        })
+
+      goalEl.setAttribute('remove-object-on-hover', {color:'blue'});
+      sceneEl.appendChild(goalEl);
+
+
+      var diff = camRotNormalized - target
+//
+      console.log("diff: "+ diff )
+
+      if(diff < 0){
+        diff += 360
+      }
       //
-      // var direction = 0
-      //
-      // if(diff > 180){
+      var direction = 0
+
+      if(diff > 180){
+        direction = 1
+        //go forwards
+      }else{
+        direction = -1
+        //go backwards
+      }
+      // if( target < camRotNormalized){
       //   direction = 1
-      //   //go forwards
-      //
       // }else{
       //   direction = -1
-      //   //go backwards
       // }
 
       // var cameraEl = this.el.sceneEl.camera.el;
       // var rotation = cameraEl.getAttribute('rotation');
+      // var increment = diff/10
+      var increment = parseFloat(diff)*0.1
 
+      console.log("increment: " +increment)
 
-
-      var increment = target/10
 
       for(var i = 0; i < 10; i ++ ){
 
@@ -101,15 +130,17 @@
         // var randomRotationTarget = i*10//Math.random() * 360
         var rotationTarget = 0
 
-        // if(direction === 1){
-        //   rotationTarget = camera.z + increment*i
-        // }else if (direction === -1){
-        //   rotationTarget = camera.z - increment*i
-        // }
+        // rotationTarget = (180+ camRotNormalized + ((i) * increment))%360
+        if(direction === 1){
+          // rotationTarget = camera.z + increment*i
+          rotationTarget = (180 + camRotNormalized - ((10-i) * increment))%360
+        }else if (direction === -1){
+          // rotationTarget = camera.z - increment*i
+          rotationTarget = (180 + camRotNormalized - ((i+1) * increment))%360
+        }
 
-        rotationTarget = 180+camRotNormalized + (i * increment)
-
-        // console.log(rotationTarget)
+        console.log(rotationTarget)
+          // rotationTarget = 180+camRotNormalized + (i * increment)
 
         entityEl.setAttribute('position', {
             x: 5 * Math.sin((rotationTarget * Math.PI)/180), //0.5-Math.random() *6,
@@ -118,7 +149,6 @@
           })
 
         entityEl.setAttribute('remove-object-on-hover', {color:'blue'});
-
         sceneEl.appendChild(entityEl);
 
       }
@@ -356,7 +386,7 @@
   <body>
     <a-scene >
       <!-- <a-entity class="camRot" rotation ="0 190 0"> -->
-        <a-entity id="camera" position="0 1.6 0" camera look-controls camera-logger>
+        <a-entity id="camera" position="0 1.6 0" camera look-controls >
           <a-entity geometry="primitive: plane; height: 0.2; width: 0.01" position="0 0 -1" rotation="0 0 45" material="color: gray; opacity: 0.5" point="target: #jumpbox">
 
              <!-- </a-entity> -->
