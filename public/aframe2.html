@@ -21,7 +21,7 @@
 
       var sceneEl = document.querySelector('a-scene');
 
-      for(var i = 0; i < 7; i ++ ){
+      for(var i = 0; i < 4; i ++ ){
 
         var entityEl = document.createElement('a-entity');
 
@@ -30,37 +30,37 @@
         // entityEl.setAttribute('change-color-on-hover', 'green')
 
         // entitlEl.setAttribute('position', {})
-        var randomHeight = i //(0.5-Math.random())*6
-        var randomRotationTarget = i*10//Math.random() * 360
+        var randomHeight = 0.5 //(0.5-Math.random())*6
+        var randomRotationTarget = (i+1)*45//Math.random() * 360
+
         entityEl.setAttribute('position', {
-            x: 5*Math.cos(randomRotationTarget * 180/Math.PI), //0.5-Math.random() *6,
+            x: 5*Math.cos((randomRotationTarget * Math.PI)/ 180), //0.5-Math.random() *6,
             y: randomHeight,
-            z: 5*Math.sin(randomRotationTarget * 180/Math.PI) //0.5-Math.random() *6
+            z: 5*Math.sin((randomRotationTarget * Math.PI)/ 180) //0.5-Math.random() *6
           })
 
         entityEl.setAttribute('remove-object-on-hover', 'white');
 
         sceneEl.appendChild(entityEl);
-
       }
     }
+
 
     function addThingsBetweenTwoPoints(){
 
       var sceneEl = document.querySelector('a-scene');
       var camera = document.querySelector('[camera]')
-      var target = 90
+      var target = 180
 
       // var camRot = camera.getAttribute('rotation')
-
       // var cameraEl = document.querySelector('#camera');
       var rotation = camera.getAttribute('rotation');
-
 
       // var worldPos = new THREE.Vector3();
       // worldPos.setFromMatrixPosition(cameraEl.object3D.matrixWorld);
       var camRotNormalized = rotation.y%360
-      console.log(camRotNormalized);
+
+      console.log("cam rot: " + camRotNormalized);
 
       // var diff = camRot.y - target
 
@@ -80,6 +80,11 @@
       //   direction = -1
       //   //go backwards
       // }
+
+      // var cameraEl = this.el.sceneEl.camera.el;
+      // var rotation = cameraEl.getAttribute('rotation');
+
+
 
       var increment = target/10
 
@@ -102,13 +107,14 @@
         //   rotationTarget = camera.z - increment*i
         // }
 
-        rotationTarget = i * increment
+        rotationTarget = 180+camRotNormalized + (i * increment)
+
         // console.log(rotationTarget)
 
         entityEl.setAttribute('position', {
-            x: 5 * Math.sin(rotationTarget * 90/Math.PI), //0.5-Math.random() *6,
+            x: 5 * Math.sin((rotationTarget * Math.PI)/180), //0.5-Math.random() *6,
             y: 1,
-            z: 5 * Math.cos(rotationTarget * 90/Math.PI) //0.5-Math.random() *6
+            z: 5 * Math.cos((rotationTarget * Math.PI)/180) //0.5-Math.random() *6
           })
 
         entityEl.setAttribute('remove-object-on-hover', {color:'blue'});
@@ -117,6 +123,36 @@
 
       }
     }
+
+    AFRAME.registerComponent('camera-logger', {
+        schema: {
+          timestamp: {type: 'int'},
+          seconds: {type: 'int'} // default 0
+        },
+
+        log : function () {
+          var cameraEl = this.el.sceneEl.camera.el;
+          var rotation = cameraEl.getAttribute('rotation');
+          var worldPos = new THREE.Vector3();
+          worldPos.setFromMatrixPosition(cameraEl.object3D.matrixWorld);
+          console.log("Time: " + this.data.seconds
+                      + "; Camera Position: (" + worldPos.x.toFixed(2) + ", " + worldPos.y.toFixed(2) + ", " + worldPos.z.toFixed(2)
+                      + "); Camera Rotation: (" + rotation.x.toFixed(2) + ", " + rotation.y.toFixed(2) + ", " + rotation.z.toFixed(2) + ")");
+        },
+
+        play: function () {
+          this.data.timestamp = Date.now();
+          this.log();
+        },
+
+        tick: function () {
+          if (Date.now() - this.data.timestamp > 1000) {
+            this.data.timestamp += 1000;
+            this.data.seconds += 1;
+            this.log();
+          }
+        },
+      });
 
 
       AFRAME.registerComponent('box', {
@@ -320,7 +356,7 @@
   <body>
     <a-scene >
       <!-- <a-entity class="camRot" rotation ="0 190 0"> -->
-        <a-entity id="camera" position="0 1.6 0" camera look-controls>
+        <a-entity id="camera" position="0 1.6 0" camera look-controls camera-logger>
           <a-entity geometry="primitive: plane; height: 0.2; width: 0.01" position="0 0 -1" rotation="0 0 45" material="color: gray; opacity: 0.5" point="target: #jumpbox">
 
              <!-- </a-entity> -->
