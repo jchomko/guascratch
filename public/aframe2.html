@@ -9,13 +9,16 @@
         console.log(e.which)
         if(e.which == '101'){
           // addThings()
-          addThingsBetweenTwoPoints(110)
+          createTarget(10,-4)
         }else if(e.which == '114'){
           // addThings()
-          addThingsBetweenTwoPoints(10)
+          createTarget(90,1)
         }else if(e.which == '116'){
           // addThings()
-          addThingsBetweenTwoPoints(270)
+          createTarget(180,4)
+        }else if(e.which == '121'){
+          // addThings()
+          createTarget(270,2)
         }
     })
 
@@ -52,7 +55,7 @@
     }
 
 
-    function addThingsBetweenTwoPoints(target){
+    function createTarget(targetR, targetX ){
 
       var sceneEl = document.querySelector('a-scene');
       var camera = document.querySelector('[camera]')
@@ -62,12 +65,16 @@
       // var cameraEl = document.querySelector('#camera');
       var rotation = camera.getAttribute('rotation');
 
-      // var worldPos = new THREE.Vector3();
-      // worldPos.setFromMatrixPosition(cameraEl.object3D.matrixWorld);
+      var camRotNormalized = 0
+      if(rotation.y < 0){
+        camRotNormalized = 360+(rotation.y%360)
+      }else{
+        camRotNormalized = rotation.y%360
+      }
 
-      var camRotNormalized = rotation.y
+      console.log("targetR: " + targetR)
+      console.log("targetX: " + targetX)
 
-      console.log("target: " + target)
       console.log("cam rot: " + camRotNormalized)
 
 
@@ -75,68 +82,77 @@
 
       goalEl.setAttribute('geometry', { primitive: 'box', height: 1.8, width: 1 });
       goalEl.setAttribute('material', {color: 'green', opacity: 0.5});
-      var nT = (target + 180)%360
+
+      var nT = (targetR + 180)%360
       goalEl.setAttribute('position', {
           x: 5 * Math.sin((nT * Math.PI)/180), //0.5-Math.random() *6,
-          y: 1,
+          y: targetX,
           z: 5 * Math.cos((nT * Math.PI)/180) //0.5-Math.random() *6
         })
 
       goalEl.setAttribute('remove-object-on-hover', {color:'blue'});
       sceneEl.appendChild(goalEl);
 
+      var diff = camRotNormalized - targetR
+      var diffA = 360-diff
+      console.log("diff: "+ diff + "diffA :" + diffA )
 
-      var diff = camRotNormalized - target
-//
-      console.log("diff: "+ diff )
-
-      if(diff < 0){
-        diff += 360
-      }
-      //
       var direction = 0
 
-      if(diff > 180){
-        direction = 1
-        //go forwards
-      }else{
+      if(diffA < diff ){
+        diff = diffA
         direction = -1
-        //go backwards
+      }else if(diff < 0 ){
+          direction = -1
+          diff = Math.abs(diff)
+      }else {
+        direction = 1
       }
-      // if( target < camRotNormalized){
-      //   direction = 1
-      // }else{
-      //   direction = -1
-      // }
 
-      // var cameraEl = this.el.sceneEl.camera.el;
-      // var rotation = cameraEl.getAttribute('rotation');
-      // var increment = diff/10
-      var increment = parseFloat(diff)*0.1
-
+      var increment = Math.abs(parseFloat(diff))*0.1
       console.log("increment: " +increment)
+      console.log("direction : " + direction)
 
+      //-40 = -4
+      // var yInc = 0
+      // if(targetX > rotation.x){
+      // }else{
+      //
+      // }
+      // var xDiff = rotation.x-(targetY*10)
+      // yInc = xDiff * 0.1
 
+      var yInc = ((targetX*13) - rotation.x) / 100
+
+      //Add points
+      //// TODO: make even spacing
       for(var i = 0; i < 10; i ++ ){
 
         var entityEl = document.createElement('a-entity');
-
         entityEl.setAttribute('geometry', { primitive: 'box', height: 1.4, width: 1 });
         entityEl.setAttribute('material', {color: 'gray', opacity: 0.5});
         // entityEl.setAttribute('change-color-on-hover', 'green')
-
         // entitlEl.setAttribute('position', {})
         var randomHeight = 1 // i //(0.5-Math.random())*6
         // var randomRotationTarget = i*10//Math.random() * 360
         var rotationTarget = 0
+        var xTarget = 0
 
         // rotationTarget = (180+ camRotNormalized + ((i) * increment))%360
-        if(direction === 1){
+        if(direction === -1){
           // rotationTarget = camera.z + increment*i
-          rotationTarget = (180 + camRotNormalized - ((10-i) * increment))%360
-        }else if (direction === -1){
+          rotationTarget = (180 + targetR - ((i+1) * increment))%360
+          // xTarget = (rotation.x/10) + ((10-i) *yInc)
+        }else if (direction === 1){
           // rotationTarget = camera.z - increment*i
           rotationTarget = (180 + camRotNormalized - ((i+1) * increment))%360
+
+        }
+
+        if(xTarget > rotation.x ){
+          xTarget = (rotation.x/10) - (i*yInc)
+        }else{
+          xTarget = (rotation.x/10) + (i*yInc)
         }
 
         console.log(rotationTarget)
@@ -144,7 +160,7 @@
 
         entityEl.setAttribute('position', {
             x: 5 * Math.sin((rotationTarget * Math.PI)/180), //0.5-Math.random() *6,
-            y: 1,
+            y: xTarget,
             z: 5 * Math.cos((rotationTarget * Math.PI)/180) //0.5-Math.random() *6
           })
 
@@ -165,9 +181,18 @@
           var rotation = cameraEl.getAttribute('rotation');
           var worldPos = new THREE.Vector3();
           worldPos.setFromMatrixPosition(cameraEl.object3D.matrixWorld);
-          console.log("Time: " + this.data.seconds
-                      + "; Camera Position: (" + worldPos.x.toFixed(2) + ", " + worldPos.y.toFixed(2) + ", " + worldPos.z.toFixed(2)
-                      + "); Camera Rotation: (" + rotation.x.toFixed(2) + ", " + rotation.y.toFixed(2) + ", " + rotation.z.toFixed(2) + ")");
+
+          var camRotNormalized = 0
+          if(rotation.y < 0){
+            camRotNormalized = 360+(rotation.y%360)
+          }else{
+            camRotNormalized = rotation.y%360
+          }
+
+
+          console.log("Time: " + this.data.seconds +"Cam Rot X : "+ rotation.x.toFixed(2) + " Normalized Camera Rotation : "+ camRotNormalized.toFixed(2) )
+                      // + "; Camera Position: (" + worldPos.x.toFixed(2) + ", " + worldPos.y.toFixed(2) + ", " + worldPos.z.toFixed(2)
+                      // + "); Camera Rotation: (" + rotation.x.toFixed(2) + ", " + rotation.y.toFixed(2) + ", " + rotation.z.toFixed(2) + ")");
         },
 
         play: function () {
@@ -386,7 +411,7 @@
   <body>
     <a-scene >
       <!-- <a-entity class="camRot" rotation ="0 190 0"> -->
-        <a-entity id="camera" position="0 1.6 0" camera look-controls >
+        <a-entity id="camera" position="0 1.6 0" camera look-controls camera-logger >
           <a-entity geometry="primitive: plane; height: 0.2; width: 0.01" position="0 0 -1" rotation="0 0 45" material="color: gray; opacity: 0.5" point="target: #jumpbox">
 
              <!-- </a-entity> -->
